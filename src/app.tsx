@@ -592,4 +592,148 @@ Try URLs that allow cross-origin access or use a production setup with server-si
                     </div>
                     <div className="flex gap-2 flex-wrap mb-6">
                       {selectedArticle?.tags.map(tag => (
-                        <span key={
+                        <span key={tag} className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {selectedArticle?.images && selectedArticle.images.length > 0 && (
+                    <div className="mb-8">
+                      <img 
+                        src={selectedArticle.images[0].src} 
+                        alt={selectedArticle.images[0].alt || selectedArticle.title}
+                        className="w-full max-w-2xl mx-auto rounded-lg shadow-md"
+                      />
+                    </div>
+                  )}
+                  
+                  <div className="prose max-w-none">
+                    <div className="text-lg leading-relaxed whitespace-pre-line text-gray-800">
+                      {selectedArticle?.content}
+                    </div>
+                  </div>
+                  
+                  <div className="mt-12 pt-8 border-t">
+                    <h3 className="text-xl font-semibold mb-4 text-gray-900">Summary</h3>
+                    <div className="bg-gray-50 p-6 rounded-lg">
+                      <p className="text-gray-700 leading-relaxed">{selectedArticle?.summary}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-8 flex items-center justify-between">
+                    <button
+                      onClick={handleBackToList}
+                      className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 font-medium"
+                    >
+                      ← Back to Articles
+                    </button>
+                    
+                    <div className="flex gap-3">
+                      <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium flex items-center gap-2">
+                        <Share2 size={16} />
+                        Share
+                      </button>
+                      <button className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-medium flex items-center gap-2">
+                        <Download size={16} />
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {showAddContent && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full">
+            <h2 className="text-xl font-bold mb-4">Add Content</h2>
+            
+            {loading && (
+              <div className="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-600 border-t-transparent"></div>
+                  <div>
+                    <p className="font-semibold text-blue-900">Extracting Content</p>
+                    <p className="text-sm text-blue-700">{extractionStatus}</p>
+                  </div>
+                </div>
+                <div className="w-full bg-blue-200 rounded-full h-2">
+                  <div 
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-1000" 
+                    style={{ 
+                      width: extractionStatus.includes('Initializing') ? '10%' :
+                             extractionStatus.includes('Analyzing') ? '20%' :
+                             extractionStatus.includes('Connecting') ? '30%' :
+                             extractionStatus.includes('Extracting') ? '50%' :
+                             extractionStatus.includes('Trying') ? '70%' :
+                             extractionStatus.includes('Creating') ? '85%' :
+                             extractionStatus.includes('successfully') ? '100%' : '90%'
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+            
+            <div className="space-y-4">
+              <input
+                type="text"
+                placeholder="Enter URL (e.g., https://example.com)"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                disabled={loading}
+              />
+              
+              <div className="flex gap-2">
+                <button
+                  onClick={handleAddArticle}
+                  disabled={loading}
+                  className="flex-1 bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {loading ? 'Extracting...' : 'Extract & Save'}
+                </button>
+                <button
+                  onClick={() => setShowAddContent(false)}
+                  disabled={loading}
+                  className="px-4 py-3 border rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+            
+            {!loading && (
+              <div className="mt-4 text-sm text-gray-600">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-3">
+                  <p className="font-medium text-red-800 mb-1">🚨 STRICT ORIGINAL CONTENT POLICY</p>
+                  <p className="text-red-700 text-xs">This app ONLY extracts real content from web sources. NO AI generation is allowed. If extraction fails, the operation fails - no fake content is created.</p>
+                </div>
+                <p className="font-medium mb-2 text-red-600">⚠️ Most URLs will fail due to browser CORS restrictions:</p>
+                <p className="text-xs text-gray-500 mb-2">For production use, implement server-side extraction with proper APIs.</p>
+                <button 
+                  onClick={() => setUrl('https://httpbin.org/html')}
+                  className="block text-blue-600 hover:underline text-xs mb-1"
+                >
+                  • Try: httpbin.org/html (CORS-enabled test page)
+                </button>
+                <button 
+                  onClick={() => setUrl('https://jsonplaceholder.typicode.com')}
+                  className="block text-blue-600 hover:underline text-xs"
+                >
+                  • Try: jsonplaceholder API (CORS-enabled)
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default App;
